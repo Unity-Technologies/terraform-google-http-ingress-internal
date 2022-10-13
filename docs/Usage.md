@@ -38,8 +38,8 @@ It may be best to first continue to the next sections of this Usage
 documentation before jumping to read more about one of these options;
 the first 3 are also covered under [Hostnames](#hostnames) and several
 are covered in more detail under [Major Options](#major-options).
-But you can see [Inputs](#input-variables) for links to more detailed
-documentation on each one.
+But you can see [Inputs](/README.md#input-variables) for links to more
+detailed documentation on each one.
 
 ### Generic Options
 
@@ -145,7 +145,7 @@ more details.
 The `hostnames` will also be used to create a certificate map.  The first
 hostname (that doesn't end in just "|") will be the PRIMARY entry -- the
 "honeypot" cert that is handed out when an unknown hostname is used.  See
-[One Certificate Map](/docs/Created.md#one-certificate-map) for more details.
+[Certificate Map](/docs/Created.md#certificate-map) for more details.
 
 * Otherwise, if `create-lb-certs` is set to `true`, then a "classic" cert
     will be created for (potentially) each entry in `hostnames`.
@@ -166,7 +166,7 @@ Certificates](/docs/Created.md#classic-ssl-certificates) for more details.
 If `url-map-ref` is not "" (and either `ip-addr-ref` is left blank or
 `ip-is-shared` is set to `false`), then a simple URL Map is created.  By
 default, that URL Map will not forward to your Backend any requests that
-use an unlisted hostname.  See [One URL Map](/docs/Created.md#one-url-map)
+use an unlisted hostname.  See [Main URL Map](/docs/Created.md#main-url-map)
 for details about how you can customize the created URL Map so hostnames
 are ignored.
 
@@ -187,7 +187,7 @@ but using either means you must not set `map-name` nor `cert-map-ref`.
 
 You can set `lb-scheme` to "EXTERNAL", "EXTERNAL_MANAGED", or "".  This
 (trivially) impacts the Global Forwarding Rules and has a larger impact
-on the URL Map (see [One URL Map](/docs/Created.md#one-url-map) for more
+on the URL Map (see [Main URL Map](/docs/Created.md#main-url-map) for more
 details).  If it is set to "", then none of these resources are created
 (and neither are the Target Proxies), though this is usually only done
 temporarily.

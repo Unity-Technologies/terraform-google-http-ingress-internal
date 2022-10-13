@@ -74,8 +74,8 @@ module for maximum flexibility.
 You can use GCP's new Cloud Certificate Manager to create a certificate
 map which provides more reliability and security benefits and can auto-renew
 even wildcard certs.  See the [certificate-map-simple module](
-github.com/TyeMcQueen/terraform-google-certificate-map-simple) for more
-about these benefits.
+https://github.com/TyeMcQueen/terraform-google-certificate-map-simple) for
+more about these benefits.
 
 ### More Flexibility
 
@@ -187,8 +187,8 @@ you are ready to customize, you should probably start with the [Usage](
 from, you can also look at any of these lists:
 
 * [What infrastructure can be created](/docs/Created.md)
-* [Input variables](/variables.tf) or the [sorted list of links](
-    /docs/Inputs.md) to the documentation for each input.
+* Input [variables.tf](/variables.tf) or the [sorted list of links](
+    #input-variables) to the documentation for each input.
 * [Known limitations](/docs/Limitations.md)
 
 The Usage documentation includes the following sections:

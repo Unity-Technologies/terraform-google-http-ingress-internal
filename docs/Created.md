@@ -11,7 +11,8 @@ needs, then the module probably allows you to just create that infrastructure
 yourself and hand it to the module via a variable whose name ends in "-ref".
 
 The easiest way to jump to the documentation for a specific input variable
-is to find the link to it in the sorted list of [inputs](/docs/Inputs.md).
+is to find the link to it in the sorted list of [inputs](
+/README.md#input-variables).
 
 If you invoke a module via
 
@@ -239,8 +240,8 @@ The URL Map can be customized by the following input variables: `lb-scheme`,
 `bad-host-redir`, `project`, `name-prefix`, and `description`.  Only when
 `lb-scheme` is "EXTERNAL" do `bad-host-host`, `bad-host-path`, and
 `bad-host-redir` apply.  Only when `lb-scheme` is "EXTERNAL_MANAGED" does
-`bad-host-code` apply.  See [inputs](/docs/Inputs.md) or [variables](
-/variables.tf) for more details.
+`bad-host-code` apply.  See [inputs](/README.md#input-variables) or
+[variables](/variables.tf) for more details.
 
 By default, the URL Map will not route a request to your Backend unless
 the request uses one of the listed `hostnames`.
