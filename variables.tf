@@ -103,8 +103,8 @@ variable "map-name" {
 
 variable "lb-scheme" {
   description   = <<-EOD
-    Defaults to "EXTERNAL" ["Classic" Global L7 HTTP(S) LB].  Can be set
-    to "EXTERNAL_MANAGED" ["Modern" Global L7 HTTP(S) LB].  Or set to "" to
+    Defaults to "EXTERNAL_MANAGED" ["Modern" Global L7 HTTP(S) LB].  Can be
+    set to "EXTERNAL" ["Classic" Global L7 HTTP(S) LB].  Or set to "" to
     deprovision most of the LB components so they can then be fully recreated.
 
     Switching between "EXTERNAL" and "EXTERNAL_MANAGED" may leave Terraform
@@ -116,7 +116,7 @@ variable "lb-scheme" {
     certificate(s).
   EOD
   type          = string
-  default       = "EXTERNAL"
+  default       = "EXTERNAL_MANAGED"
 
   validation {
     condition       = ( var.lb-scheme == "" ||
@@ -415,10 +415,10 @@ variable "http-redir-code" {
 
 variable "bad-host-code" {
   description   = <<-EOD
-    When `url-map-ref` is "" and `lb-scheme` is "EXTERNAL_MANAGED", then
-    the created URL Map will respond with this failure HTTP status code
-    when a request is received for an unrecognized hostname.  Set to 0
-    to have the URL Map ignore the request's hostname.
+    When `lb-scheme` is left as "EXTERNAL_MANAGED" (and `url-map-ref` is ""),
+    then the created URL Map will respond with this failure HTTP status code
+    when a request is received for an unlisted hostname.  Set to 0 to have
+    the URL Map ignore the request's hostname.
 
     Example: bad-host-code = 404
   EOD
@@ -434,24 +434,25 @@ variable "bad-host-code" {
 
 variable "bad-host-host" {
   description   = <<-EOD
-    When `url-map-ref` is "" and `lb-scheme` is "EXTERNAL", then the created
-    URL Map will respond with a useless redirect when a request is received
-    for an unrecognized hostname.  Set `bad-host-host` to "" to have the URL
-    Map instead ignore the request's hostname.  Otherwise, the redirect will
-    be to "https://$${bad-host-host}$${bad-host-path}".
+    When `lb-scheme` is "EXTERNAL" (and `url-map-ref` is ""),
+    then the created URL Map can respond with a useless
+    redirect when a request is received for an unlisted hostname ("EXTERNAL"
+    URL Maps cannot directly reject requests).  Only if you set
+    `bad-host-host` (not to "") will the URL Map do such redirects
+    which will be to "https://$${bad-host-host}$${bad-host-path}".
 
-    Example: bad-host-host = "some-other.my-service.example.com"
+    Example: bad-host-host = "localhost"
   EOD
   type          = string
-  default       = "localhost"
+  default       = ""
 }
 
 variable "bad-host-path" {
   description   = <<-EOD
-    When `url-map-ref` is "", `lb-scheme` is "EXTERNAL", and `bad-host-host`
-    is not "", then the created URL Map will respond with a useless redirect
-    to "https://$${bad-host-host}$${bad-host-path}" when a request is
-    received for an unrecognized hostname.  Must start with "/".
+    When `lb-scheme` is "EXTERNAL" and `bad-host-host` is not "", then
+    the created URL Map will respond with a useless redirect to
+    "https://$${bad-host-host}$${bad-host-path}" when a request is received
+    for an unlisted hostname.  `bad-host-path` must start with "/".
 
     Example: bad-host-path = "/pound-sand"
   EOD
@@ -466,10 +467,10 @@ variable "bad-host-path" {
 
 variable "bad-host-redir" {
   description   = <<-EOD
-    When `url-map-ref` is "", `lb-scheme` is "EXTERNAL", and `bad-host-host`
-    is not "", then the created URL Map will respond with a useless redirect
-    when a request is received for an unrecognized hostname.  This sets the
-    HTTP status code for that redirect and can be 301, 302, 303, 307, or 308.
+    When `lb-scheme` is "EXTERNAL" and `bad-host-host` is not "", then the
+    created URL Map will respond with a useless redirect when a request is
+    received for an unlisted hostname.  This sets the HTTP status code for
+    that redirect and can be 301, 302, 303, 307, or 308.
 
     Example: redir-status = 303
   EOD
