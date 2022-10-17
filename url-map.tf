@@ -8,8 +8,8 @@ locals {
   be-proj   = ( "" == var.backend-ref ? "" :
     1 == length(local.be-parts) ? local.project :
     2 == length(local.be-parts) ? local.be-parts[0] :
-    "projects" == local.be-parts[1] ? local.be-parts[2] :
-      "ERROR backend-ref has URL not starting with '/projects/' (${var.backend-ref})" )
+    "projects" == local.be-parts[0] ? local.be-parts[1] :
+      "ERROR backend-ref has URL not starting with 'projects/' (${var.backend-ref})" )
 }
 
 data "google_compute_backend_service" "b" {
