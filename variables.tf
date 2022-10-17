@@ -107,8 +107,6 @@ variable "lb-scheme" {
     to "EXTERNAL_MANAGED" ["Modern" Global L7 HTTP(S) LB].  Or set to "" to
     deprovision most of the LB components so they can then be fully recreated.
 
-    TODO: Test if this is still true!
-
     Switching between "EXTERNAL" and "EXTERNAL_MANAGED" may leave Terraform
     unable to automatically recreate the needed components in the proper
     order to successfully complete the transition.  If you switch to "" and

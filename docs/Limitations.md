@@ -48,7 +48,7 @@ cause the `plan` to fail.
 
 But you can save yourself some time by reviewing the plan output for such
 somewhat-hidden error explanations.  To make this easier, these error
-explanations will always include the string "ERROR".
+explanations will always include the string "ERROR" (in upper case).
 
 And if you miss some and do an `apply`, then the explanations will be
 included in the error output, usually when it reports the value of a

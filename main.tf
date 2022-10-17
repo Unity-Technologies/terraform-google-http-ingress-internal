@@ -17,7 +17,7 @@ locals {
   project = ( "" != var.project ? var.project :
     [ for p in [ data.google_client_config.default.project ] :
         try( "" != p, false ) ? p
-        : "google_client_config.default does not define '.project'" ][0] )
+        : "ERROR google_client_config.default does not define '.project'" ][0] )
 }
 
 # The *.tf files of this module are evaulated in the following order:

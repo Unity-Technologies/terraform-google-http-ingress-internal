@@ -9,7 +9,7 @@ locals {
     : 303 == var.http-redir-code ? "SEE_OTHER"
     : 307 == var.http-redir-code ? "TEMPORARY_REDIRECT"
     : 308 == var.http-redir-code ? "PERMANENT_REDIRECT"
-    : "Invalid redirect HTTP status code: ${var.http-redir-code}" )
+    : "ERROR Invalid redirect HTTP status code: ${var.http-redir-code}" )
 }
 
 # HTTPS target proxy:
@@ -29,7 +29,7 @@ resource "google_compute_target_https_proxy" "https" {
     local.lb-cert-ids,
     [ for ref, c in data.google_compute_ssl_certificate.c :
       try( 0 < length(c.id), false ) ? c.id
-        : "No certificate ${ref} found" ],
+        : "ERROR No certificate ${ref} found" ],
   ] )
   # TODO: Add support for ssl_policy set from var.ssl-policy-ref
 }

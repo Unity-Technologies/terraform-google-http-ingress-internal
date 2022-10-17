@@ -9,7 +9,7 @@ locals {
   dns-data-title = ( var.dns-zone-ref == "" ? ""
     : 2 == length(local.dns-parts) ? local.dns-parts[1]
     : 1 == length(local.dns-parts) ? local.dns-parts[0]
-    : "For dns-zone-ref, resource ID is not supported (${var.dns-zone-ref})" )
+    : "ERROR For dns-zone-ref, .id is not supported (${var.dns-zone-ref})" )
 }
 
 # Look up managed DNS zone created elsewhere:
@@ -24,24 +24,25 @@ locals {
   zone-title = ( var.dns-zone-ref == "" ? ""
     : [ for name in [ data.google_dns_managed_zone.z[0].name ] :
         try( 0 < length(name), false ) ? name
-        : "DNS Zone ${local.zone-proj}/${local.dns-data-title} not found" ][0] )
-  zone-domain = ( var.dns-zone-ref == "" ? "/no-zone-ref"
+        : "ERROR DNS Zone ${local.zone-proj}/${local.dns-data-title} not found"
+      ][0] )
+  zone-domain = ( var.dns-zone-ref == "" ? "/ERROR-no-zone-ref"
     : [ for dom in [ data.google_dns_managed_zone.z[0].dns_name ] :
           try( 0 < length(dom), false )
             ? trimsuffix( dom, "." )
-            : "/invalid-zone-ref" ][0] )
+            : "/ERROR-invalid-zone-ref" ][0] )
+
+  keys = [ for h, fq in local.tofq : h ]
 
   # Build map from hostname to "|" suffix:
-  tosuff = { for h in var.hostnames :
-    split("|",h)[0] => trimprefix( h, split("|",h)[0] ) }
+  tosuff = { for e in var.hostnames :
+    split("|",e)[0] => trimprefix( e, split("|",e)[0] ) }
 
   # Build map from hostname to fully-qualified hostname:
   tofq = { for h, suff in local.tosuff : h => (
     1 == length(split(".",h))
       ? "${h}.${local.zone-domain}"
       : "." == substr(h,-1,1) ? "${h}${local.zone-domain}" : h ) }
-
-  keys = [ for h, fq in local.tofq : h ]
 
   # Hosts that DNS `A` records can be added for:
   dnshosts = [ for h, fq in local.tofq : fq

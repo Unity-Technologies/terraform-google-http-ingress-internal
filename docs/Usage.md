@@ -12,34 +12,36 @@
 ## Option Toggles
 
 To open the documentation on "usage", here is a quick summary of the input
-variables that toggle optional behaviors.
+variables that toggle optional behaviors.  It may be best to first continue
+to the next sections of this Usage documentation before jumping to read more
+about one of these options; the first 3 are also covered under [Hostnames](
+#hostnames) and several are covered in more detail under [Major Options](
+#major-options).  But you can see [Inputs](/README.md#input-variables) for
+links to more detailed documentation on each one.
 
 * `dns-add-hosts` - Causes a DNS `A` record to be created for each "short"
     entry in `hostanames`.
 
 * `create-lb-certs` - Creates "classic" LB-authorized SSL certificates for
-    entries in `hostnames`.
+    entries in `hostnames` (see [Classic Certificates](
+    /docs/Created.md#classic-ssl-certificates)).
 
-* `map-name` - Creates "modern" SSL certificates for entries in `hostnames`.
+* `map-name` - Creates "modern" SSL certificates for entries in `hostnames`
+    and a certificate map (see [Modern Certificates](
+    /docs/Created.md#modern-ssl-certificates)).
 
-* `redirect-http` - Redirects http:// requests to become https:// requests.
+* `redirect-http` - Redirects http:// requests to become https:// requests
+    (see [Redirect URL Map](/docs/Created.md#redirect-url-map)).
 
 * Several input variables whose names end in "-ref", when set (not to ""),
     will prevent the creation of a resource: `ip-addr-ref`, `cert-map-ref`,
     and `url-map-ref`.  This allows you full control over how such items are
-    configured.
+    constructed.
 
-* Specifying `dns-zone-ref` is required for a lot of the optional features
+* Specifying `dns-zone-ref` is required for a lot of the optional features.
 
 * `lb-scheme`, `ip-addr-ref`, and `ip-is-shared` can prevent the creation
     of most of the load balancing infrastructure.
-
-It may be best to first continue to the next sections of this Usage
-documentation before jumping to read more about one of these options;
-the first 3 are also covered under [Hostnames](#hostnames) and several
-are covered in more detail under [Major Options](#major-options).
-But you can see [Inputs](/README.md#input-variables) for links to more
-detailed documentation on each one.
 
 ### Generic Options
 
@@ -71,7 +73,7 @@ LB-authorized or customer-managed.  All 3 types of modern SSL certificates
 are created using `google_certificate_manager_certificate` resource blocks.
 
 These "modern" certificates are used if you set `map-name` or `cert-map-ref`.
-LB-authorized "modern" certs are very similar to the "classic" versions,
+"Modern" LB-authorized certs are very similar to the "classic" versions,
 including being conceptually simpler.  DNS-authorized certs have some
 advantages, though you may not find them worthwhile unless you are using
 hostnames in a GCP-Managed DNS Zone that can be updated from the same
@@ -119,7 +121,7 @@ character require `dns-zone-ref` to point to a GCP-Managed DNS Zone.
 They will have the zone domain appended to them.  These are also the
 only hostnames that the module may create DNS `A` records for (only
 when you set `dns-add-hosts = true`).  DNS `A` records are not created
-for hostnames that start with "`*`" (nor for blank hostnames).
+for hostnames that start with "`*`" (nor for a blank hostname).
 
 ### Creating Certificates
 
@@ -167,8 +169,9 @@ If `url-map-ref` is not "" (and either `ip-addr-ref` is left blank or
 `ip-is-shared` is set to `false`), then a simple URL Map is created.  By
 default, that URL Map will not forward to your Backend any requests that
 use an unlisted hostname.  See [Main URL Map](/docs/Created.md#main-url-map)
-for details about how you can customize the created URL Map so hostnames
-are ignored.
+for details about how you can customize the created URL Map and setting
+combinations that will cause requests from unlisted hostnames to be sent
+to your Backend.
 
 
 ## Major Options

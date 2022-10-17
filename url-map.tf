@@ -1,15 +1,15 @@
 
 locals {
-  be-parts = split( "/", var.backend-ref )
-  be-title = ( "" == var.backend-ref ? "" :
+  be-parts  = split( "/", var.backend-ref )
+  be-title  = ( "" == var.backend-ref ? "" :
     1 == length(local.be-parts) ? local.be-parts[0] :
     2 == length(local.be-parts) ? local.be-parts[1] :
       local.be-parts[ length(local.be-parts) - 1 ] )
-  be-proj = ( "" == var.backend-ref ? "" :
+  be-proj   = ( "" == var.backend-ref ? "" :
     1 == length(local.be-parts) ? local.project :
     2 == length(local.be-parts) ? local.be-parts[0] :
     "projects" == local.be-parts[1] ? local.be-parts[2] :
-      "backend-ref has URL not starting with '/projects/'" )
+      "ERROR backend-ref has URL not starting with '/projects/' (${var.backend-ref})" )
 }
 
 data "google_compute_backend_service" "b" {
@@ -20,14 +20,15 @@ data "google_compute_backend_service" "b" {
 locals {
   be-id = [ for id in [ data.google_compute_backend_service.b.id ] :
     try( 0 < length(id), false ) ? id :
-      "No such backend as ${local.be-proj}/${local.be-title}" ][0]
+      "ERROR No such backend as ${local.be-proj}/${local.be-title}" ][0]
 
-  host-redir-code = ( 301 == var.bad-host-redir ? "MOVED_PERMANENTLY_DEFAULT"
+  host-redir-code   = (
+      301 == var.bad-host-redir ? "MOVED_PERMANENTLY_DEFAULT"
     : 302 == var.bad-host-redir ? "FOUND"
     : 303 == var.bad-host-redir ? "SEE_OTHER"
     : 307 == var.bad-host-redir ? "TEMPORARY_REDIRECT"
     : 308 == var.bad-host-redir ? "PERMANENT_REDIRECT"
-    : "Invalid redirect HTTP status code: ${var.bad-host-redir}" )
+    : "ERROR Invalid redirect HTTP status code: ${var.bad-host-redir}" )
   reject = ( "EXTERNAL_MANAGED" == var.lb-scheme && 0 != var.bad-host-code )
   redirect = ( "EXTERNAL" == var.lb-scheme && "" != var.bad-host-path )
 }

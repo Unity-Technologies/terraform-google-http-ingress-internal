@@ -26,8 +26,8 @@ resource "google_compute_managed_ssl_certificate" "c" {
 }
 
 locals {
-  lb-cert-ids = [ for ref in var.lb-cert-refs :
-    ref if 2 < length(split("/",ref)) ]
+  lb-cert-ids = [ for ref in var.lb-cert-refs : ref
+    if 2 < length(split("/",ref)) ]
 
   lb-cert-parts = [ for ref in var.lb-cert-refs :
     2 == length(split("/",ref)) ? ref : "${local.project}/${ref}"

@@ -20,7 +20,7 @@ If you invoke a module via
 
 then an output value from that invocation can be accessed via an expression
 like `module.NAME.ip[0]`.  Below, output values will often be documented
-using similar full expression.  Sometimes, a shorter form like `.ip[0]` or
+using similar full expressions.  Sometimes, a shorter form like `.ip[0]` or
 even `ip[0]` will be used.
 
 
@@ -84,7 +84,7 @@ Only when `map-name` is not left blank, the following are created:
 * A "Modern" GCP-Managed SSL Certificate for each entry in `hostnames`
     not marked for exclusion
 * Other items to authorize any DNS-authorized certs created above
-* A Certificate Map with entries for each hostname
+* A Certificate Map with entries for (potentially) each hostname
 
 The certificates use Cloud Certificate Manager and can be authorized via
 the load balancer or via a DNS challenge.  Hostnames with just a "|"
@@ -99,12 +99,12 @@ added to the map.  The first hostname will be the "PRIMARY" and its
 certificate will be handed out whenever a request uses a hostname not
 matching any of the other map entries.
 
-Prerequisites are `map-name` and `hostnames` and the certs created for
-or referenced (via `map-cert-ids`) by entries in `hostnames`.  The only
-other customization is via the general options (`project`, `name-prefix`,
-`labels`, and `description`).  The output value
-`module.NAME.cert-map[0].map1[0]` will be the resource record of the
-created map.
+Prerequisites are `map-name` and `hostnames` and the certs created for or
+referenced (via `map-cert-ids`) by entries in `hostnames`.  The only other
+customization is via the general options (`project`, `name-prefix`, `labels`,
+and `description`).  The output value `module.NAME.cert-map[0].map1[0]` will
+be the resource record of the created map.  To use the certificate map, it
+is better to use `module.NAME.cert-map[0].map-id1[0]`.
 
 ### Modern LB-Authorized Certificates
 
@@ -132,7 +132,7 @@ is that the Zone be delegated to from the parent domain so DNS requests
 via the internet reach the GCP-Managed Zone.
 
 Prerequisites: `dns-zone-ref` and write access to the referenced DNS Zone,
-`map-name`, `hostnames`.  For certificate activation: public delegation
+`map-name`, and `hostnames`.  For certificate activation: public delegation
 to the DNS Zone.
 
 For DNS Records, the only customization is via `project` and only if
@@ -160,8 +160,10 @@ that Terraform can update.
 For every entry in `hostnames` (ignoring any "|" suffix) that either contains
 no "." characters or ends in a "." character, a DNS `A` Record will be
 created for that hostname (with the Zone's domain appended) and resolving to
-the IP Address (either created or referenced via `ip-addr-ref`).  These are
-created in the project that owns the Zone.
+the IP Address (either created or referenced via `ip-addr-ref`).  Except that
+no DNS records are created for hostnames that contain a "`*`" character nor
+for blank hostnames.  The records are created in the project that owns the
+Zone.
 
 No customizations.
 
@@ -200,9 +202,9 @@ created certs, see [Classic Certs](#classic-ssl-certificates) or [Modern
 Certs](#modern-ssl-certificates) (the latter can only be attached via a
 created certificate map).
 
-See [inputs](/docs/Inputs.md) or [variables](/variables.tf) for more details.
-The output values `.http[0]`, `.https[0]`, `.f80[0]`, and `.f443[0]` will
-be the resource records of the created resource.
+See [inputs](/README.md#input-variables) or [variables](/variables.tf) for
+more details.  The output values `.http[0]`, `.https[0]`, `.f80[0]`, and
+`.f443[0]` will be the resource records of the created resource.
 
 
 ## Redirect URL Map
@@ -246,17 +248,17 @@ The URL Map can be customized by the following input variables: `lb-scheme`,
 By default, the URL Map will not route a request to your Backend unless
 the request uses one of the listed `hostnames`.
 
-If you use `lb-scheme` of "EXTERNAL_MANAGED", then requests using other
+If you leave `lb-scheme` as "EXTERNAL_MANAGED", then requests using other
 hostnames will be rejected with a 403 status (unless you change
 `bad-host-code`).  Setting `bad-host-code = 0` means all requests will
 be routed to your Backend regardless of the hostname used in the request.
 
-If you use `lb-scheme` of "EXTERNAL", then requests for other hostnames will
-get a useless 307 redirect to "https://localhost/bad-host" (by default) since
-Classic L7 LBs do not support generating failure responses.  You can change
-the 307 status via `bad-host-redir`.  You can replace the "/bad-host" part of
-the redirect by setting `bad-host-path`.  Setting `bad-host-path = ""` will
-cause the URL Map to route all requests to your Backend regardless of the
+If you set `lb-scheme` to "EXTERNAL", then requests for unlisted hostnames
+will get a useless 307 redirect to "https://localhost/bad-host" (by default)
+since Classic L7 LBs do not support generating failure responses.  You can
+change the 307 status via `bad-host-redir`.  You can replace the "/bad-host"
+part of the redirect by setting `bad-host-path`.  Setting `bad-host-path = ""`
+will cause the URL Map to route all requests to your Backend regardless of the
 hostname used in the request.
 
 The output value `.url-map[0]` will be the resource record if a URL Map is

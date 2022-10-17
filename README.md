@@ -3,6 +3,7 @@
 A Terraform module for building HTTP/S load balancing ingresses with
 similar features to GKE ingress automation (but better).
 
+
 ## Contents
 
 * [Simplest Example](#simplest-example)
@@ -25,9 +26,9 @@ setting up DNS for it).
       source            = (
         "github.com/TyeMcQueen/terraform-google-https-ingress" )
       name-prefix       = "my-svc-"
-      backend-ref       = google_compute_backend_service.my-svc.id
       hostnames         = [ "my-svc.my-product.example.com" ]
       create-lb-certs   = true
+      backend-ref       = google_compute_backend_service.my-svc.id
     }
 
 You can get additional security and reliability benefits by using a
@@ -100,11 +101,11 @@ hostnames.
       source            = (
         "github.com/TyeMcQueen/terraform-google-http-ingress" )
       name-prefix       = "my-svc-"
-      backend-ref       = google_compute_backend_service.my-svc.id
       map-name          = "my-svc"
       hostnames         = [ "honeypot", "svc" ]
       dns-zone-ref      = "my-zone"
       dns-add-hosts     = true
+      backend-ref       = google_compute_backend_service.my-svc.id
     }
 
 By using a Cloud Certificate Manager certificate map you get additional
@@ -121,29 +122,28 @@ module uses fully documents these additional benefits.
 
 The above example is the same as the following example where the use of the
 other module is made explicit.  This approach is recommended by Terraform
-as a best practice for combining modules.  But you should be able to start
-with the simpler usage above and then move to this more verbose usage when
-the need arises (including when you need to make certain types of changes
-without disrupting traffic through your ingress).
+as a best practice for combining modules.  But you can start with the simpler
+usage above and then move to this more verbose usage when the need arises.
 
     module "my-cert-map" {
       source            = (
         "github.com/TyeMcQueen/terraform-google-certificate-map-simple" )
       name-prefix       = "my-svc-"
-      dns-zone-ref      = "my-zone"
       map-name1         = "my-svc"
       hostnames1        = [ "honeypot", "svc" ]
+      dns-zone-ref      = "my-zone"
     }
 
     module "my-ingress" {
       source            = (
         "github.com/TyeMcQueen/terraform-google-http-ingress" )
       name-prefix       = "my-svc-"
-      dns-zone-ref      = "my-zone"
       hostnames         = [ "honeypot", "svc" ]
+      dns-zone-ref      = "my-zone"
       dns-add-hosts     = true
       backend-ref       = google_compute_backend_service.my-svc.id
       cert-map-ref      = module.my-cert-map[0].map-id1[0]
+      # Above added in place of `map-name`
     }
 
 
@@ -158,12 +158,12 @@ hostname).
       source            = (
         "github.com/TyeMcQueen/terraform-google-http-ingress" )
       name-prefix       = "my-svc-"
-      backend-ref       = google_compute_backend_service.my-svc.id
       map-name          = "my-svc"
       hostnames         = [
         "honeypot.my-product.example.com|LB",
         "my-svc.my-product.example.com|LB",
       ]
+      backend-ref       = google_compute_backend_service.my-svc.id
     }
 
 This way you lose some minor resiliency benefits of using DNS-authorized
@@ -191,8 +191,9 @@ from, you can also look at any of these lists:
     #input-variables) to the documentation for each input.
 * [Known limitations](/docs/Limitations.md)
 
-The Usage documentation includes the following sections:
+The [Usage](/docs/Usage.md) documentation includes the following sections:
 
+* [Option Toggles](/docs/Usage.md#option-toggles)
 * [Certificate Types](/docs/Usage.md#certificate-types)
 * [Hostnames](/docs/Usage.md#hostnames)
 * [Major Options](/docs/Usage.md#major-options)
