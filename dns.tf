@@ -32,7 +32,7 @@ locals {
             ? trimsuffix( dom, "." )
             : "/ERROR-invalid-zone-ref" ][0] )
 
-  keys = [ for h, fq in local.tofq : h ]
+  keys = [ for e in var.hostnames : split("|",e)[0] ]
 
   # Build map from hostname to "|" suffix:
   tosuff = { for e in var.hostnames :
