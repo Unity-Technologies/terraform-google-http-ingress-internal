@@ -238,15 +238,20 @@ The prerequisites for the created URL Map are `backend-ref` and non-empty
 `hostnames` (unless you customize the URL Map to not care about `hostnames`).
 
 The URL Map can be customized by the following input variables: `lb-scheme`,
-`hostnames`, `bad-host-code`, `bad-host-host`, `bad-host-path`,
-`bad-host-redir`, `project`, `name-prefix`, and `description`.  Only when
-`lb-scheme` is "EXTERNAL" do `bad-host-host`, `bad-host-path`, and
-`bad-host-redir` apply.  Only when `lb-scheme` is "EXTERNAL_MANAGED" does
-`bad-host-code` apply.  See [inputs](/README.md#input-variables) or
-[variables](/variables.tf) for more details.
+`hostnames`, `reject-honeypot`, `bad-host-code`, `bad-host-backend`,
+`bad-host-host`, `bad-host-path`, `bad-host-redir`, `project`, `name-prefix`,
+and `description`.  Only when `lb-scheme` is left as "EXTERNAL_MANAGED" does
+`bad-host-code` apply.  Only when `lb-scheme` is "EXTERNAL" can
+`bad-host-backend`, `bad-host-host`, `bad-host-path`, and `bad-host-redir`
+apply.  See [inputs](/README.md#input-variables) or [variables](
+/variables.tf) for more details.
 
-By default, the URL Map will not route a request to your Backend unless
-the request uses one of the listed `hostnames`.
+By default, the URL Map will not route a request to your Backend
+unless the request uses one of the listed `hostnames`.  If you set
+`reject-honeypot = true`, then the first listed hostname will be treated
+like an unlisted hostname (by the URL Map).  If you set `lb-scheme` to
+"EXTERNAL", then the URL Map will default to ignoring the request's
+hostname because "EXTERNAL" URL Maps cannot directly reject requests.
 
 If you leave `lb-scheme` as "EXTERNAL_MANAGED", then requests using other
 hostnames will be rejected with a 403 status (unless you change
@@ -254,12 +259,20 @@ hostnames will be rejected with a 403 status (unless you change
 be routed to your Backend regardless of the hostname used in the request.
 
 If you set `lb-scheme` to "EXTERNAL", then requests for unlisted hostnames
-will get a useless 307 redirect to "https://localhost/bad-host" (by default)
-since Classic L7 LBs do not support generating failure responses.  You can
-change the 307 status via `bad-host-redir`.  You can replace the "/bad-host"
-part of the redirect by setting `bad-host-path`.  Setting `bad-host-path = ""`
-will cause the URL Map to route all requests to your Backend regardless of the
-hostname used in the request.
+can either be routed to your main Backend (the default), be routed to a
+separate Backend (via `bad-host-backend`), or get a useless 307 redirect
+to, for example, "https://localhost/bad-host" (if you set `bad-host-host`
+to "localhost").  If you set `bad-host-host`, then you can also set
+`bad-host-path` (defaults to "/bad-host") and/or `bad-host-redir`
+(defaults to 307).
+
+The [backend-to-gke](
+https://github.com/TyeMcQueen/terraform-google-backend-to-gke) module
+provides an example GKE workload that just rejects all requests.  So you
+can deploy that example workload and use that module to create a Backend
+Service that routes to it.  Then you can pass that Backend Service's `.id`
+as `bad-host-backend` if you need an "EXTERNAL" load balancer that does a
+403 rejection of all requests for unlisted hostnames.
 
 The output value `.url-map[0]` will be the resource record if a URL Map is
 created.

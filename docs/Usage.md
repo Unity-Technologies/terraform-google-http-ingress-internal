@@ -33,6 +33,10 @@ links to more detailed documentation on each one.
 * `redirect-http` - Redirects http:// requests to become https:// requests
     (see [Redirect URL Map](/docs/Created.md#redirect-url-map)).
 
+* `reject-honeypot` - Prevents requests for the "honeypot" hostname from
+    being sent to your main Backend Service (see [Main URL Map](
+    /docs/Created.md#main-url-map)).
+
 * Several input variables whose names end in "-ref", when set (not to ""),
     will prevent the creation of a resource: `ip-addr-ref`, `cert-map-ref`,
     and `url-map-ref`.  This allows you full control over how such items are
@@ -42,6 +46,12 @@ links to more detailed documentation on each one.
 
 * `lb-scheme`, `ip-addr-ref`, and `ip-is-shared` can prevent the creation
     of most of the load balancing infrastructure.
+
+* If you set `lb-scheme = "EXTERNAL"` because you are not ready to use
+    "modern" external HTTP/S load balancers, then the created URL Map
+    cannot directly reject requests for unlisted hostnames, so you may
+    want to also set either `bad-host-backend` or `bad-host-host`.  See
+    [Main URL Map](/docs/Created.md#main-url-map) for details.
 
 ### Generic Options
 

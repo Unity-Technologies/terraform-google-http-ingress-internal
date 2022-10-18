@@ -103,6 +103,7 @@ hostnames.
       name-prefix       = "my-svc-"
       map-name          = "my-svc"
       hostnames         = [ "honeypot", "svc" ]
+      reject-honeypot   = true
       dns-zone-ref      = "my-zone"
       dns-add-hosts     = true
       backend-ref       = google_compute_backend_service.my-svc.id
@@ -113,6 +114,8 @@ benefits including a "honeypot" hostname, a certificate for which will be
 given to hackers that hit your load balancer IP address using HTTPS but
 with some random hostname.  This prevents the hackers from trivially being
 able to discover the hostname to use for further scanning/attack attempts.
+And `reject-honeypot` means requests that use the honeypot hostname will
+not even be routed to your Backend.
 
 The [certificate-map-simple module](
 github.com/TyeMcQueen/terraform-google-certificate-map-simple) that this
@@ -139,6 +142,7 @@ usage above and then move to this more verbose usage when the need arises.
         "github.com/TyeMcQueen/terraform-google-http-ingress" )
       name-prefix       = "my-svc-"
       hostnames         = [ "honeypot", "svc" ]
+      reject-honeypot   = true
       dns-zone-ref      = "my-zone"
       dns-add-hosts     = true
       backend-ref       = google_compute_backend_service.my-svc.id
@@ -163,6 +167,7 @@ hostname).
         "honeypot.my-product.example.com|LB",
         "my-svc.my-product.example.com|LB",
       ]
+      reject-honeypot   = true
       backend-ref       = google_compute_backend_service.my-svc.id
     }
 

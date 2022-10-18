@@ -413,6 +413,27 @@ variable "http-redir-code" {
 
 ###--- URL map options ---###
 
+variable "reject-honeypot" {
+  description   = <<-EOD
+    Set to `true` to not forward to your Backend any requests sent to the
+    "honeypot" (first) hostname.  This can only work when there are at
+    least 2 entries in `hostnames` and `url-map-ref` is not "".  If
+    `lb-scheme` is left as "EXTERNAL_MANAGED", then `bad-host-code` must
+    not be set to 0.  If `lb-scheme` is set to "EXTERNAL", then either
+    `bad-host-backend` or `bad-host-host` must be set (not to "") and, in
+    this case, the request will not be rejected by the URL Map (but it
+    will not be forwarded to your main Backend).
+
+    You can set this when `lb-scheme` is "" but it will not have any impact
+    in that case.  Other than that, if you set this when it cannot work, then
+    the `plan` will include a parameter value that contains "ERROR" and
+    mentions this setting and the `apply` will fail in a way that mentions
+    the same.
+  EOD
+  type          = bool
+  default       = false
+}
+
 variable "bad-host-code" {
   description   = <<-EOD
     When `lb-scheme` is left as "EXTERNAL_MANAGED" (and `url-map-ref` is ""),
@@ -432,10 +453,24 @@ variable "bad-host-code" {
   }
 }
 
+variable "bad-host-backend" {
+  description   = <<-EOD
+    When `lb-scheme` is "EXTERNAL" (and `url-map-ref` is ""), then the
+    created URL Map can forward requests for unlisted hostnames to a
+    different Backend Service (perhaps one that just rejects all requests).
+    For this to happen, you must set `bad-host-backend` to the `.id` of
+    this alternate Backend Service.
+
+    Example: bad-host-backend = google_compute_backend_service.reject.id
+  EOD
+  type          = string
+  default       = ""
+}
+
 variable "bad-host-host" {
   description   = <<-EOD
-    When `lb-scheme` is "EXTERNAL" (and `url-map-ref` is ""),
-    then the created URL Map can respond with a useless
+    When `lb-scheme` is "EXTERNAL" (and `url-map-ref` and `bad-host-backend`
+    are both ""), then the created URL Map can respond with a useless
     redirect when a request is received for an unlisted hostname ("EXTERNAL"
     URL Maps cannot directly reject requests).  Only if you set
     `bad-host-host` (not to "") will the URL Map do such redirects

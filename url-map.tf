@@ -18,7 +18,7 @@ data "google_compute_backend_service" "b" {
 }
 
 locals {
-  be-id = [ for id in [ data.google_compute_backend_service.b.id ] :
+  be-id     = [ for id in [ data.google_compute_backend_service.b.id ] :
     try( 0 < length(id), false ) ? id :
       "ERROR No such backend as ${local.be-proj}/${local.be-title}" ][0]
 
@@ -29,8 +29,30 @@ locals {
     : 307 == var.bad-host-redir ? "TEMPORARY_REDIRECT"
     : 308 == var.bad-host-redir ? "PERMANENT_REDIRECT"
     : "ERROR Invalid redirect HTTP status code: ${var.bad-host-redir}" )
-  reject = ( "EXTERNAL_MANAGED" == var.lb-scheme && 0 != var.bad-host-code )
-  redirect = ( "EXTERNAL" == var.lb-scheme && "" != var.bad-host-path )
+  reject        = (
+    "EXTERNAL_MANAGED" == var.lb-scheme && 0 != var.bad-host-code )
+  reroute       = (
+    "EXTERNAL" == var.lb-scheme && "" != var.bad-host-backend )
+  redirect      = ( ! local.reroute &&
+    "EXTERNAL" == var.lb-scheme && "" != var.bad-host-host )
+  check-host = local.reject || local.reroute || local.redirect
+
+  honeypot-err  = ( ! var.reject-honeypot ? "" :
+    "" != var.url-map-ref ?
+      "ERROR reject-honeypot=true requires url-map-ref to be \"\"" :
+    length(var.hostnames) < 2 ?
+      "ERROR reject-honeypot=true requires at least 2 hostnames" :
+    var.lb-scheme == "EXTERNAL" && var.bad-host-host == ""
+        && var.bad-host-backend == "" ?
+      "ERROR reject-honeypot=true requires bad-host-host or bad-host-backend" :
+    var.lb-scheme == "EXTERNAL_MANAGED" && var.bad-host-code == 0 ?
+      "ERROR reject-honeypot=true cannot work with bad-host-code=0" : "" )
+
+  skip-honeypot = ( var.reject-honeypot && "" == local.honeypot-err )
+
+  url-hosts     = [
+    for h, fq in local.tofq : fq
+    if fq != local.tofq[local.keys[0]] || ! local.skip-honeypot ]
 }
 
 # Maybe create a generic URL Map:
@@ -68,15 +90,18 @@ resource "google_compute_url_map" "u" {
     }
   }
 
+  default_service               = ( local.reroute ? var.bad-host-backend
+    : local.check-host ? null : local.be-id )
+
   dynamic "host_rule" {
-    for_each = toset( local.reject || local.redirect ? [1] : [] )
+    for_each = toset( local.check-host ? [1] : [] )
     content {
-      hosts             = [ for h, fq in local.tofq : fq ]
+      hosts             = local.url-hosts
       path_matcher      = "svc"
     }
   }
   dynamic "path_matcher" {
-    for_each = toset( local.reject || local.redirect ? [1] : [] )
+    for_each = toset( local.check-host ? [1] : [] )
     content {
       name              = "svc"
       default_service   = local.be-id
@@ -85,7 +110,8 @@ resource "google_compute_url_map" "u" {
 }
 
 locals {
-  url-map-id = ( var.url-map-ref == "" && var.lb-scheme != ""
-    ? google_compute_url_map.u[0].id : var.url-map-ref )
+  url-map-id = ( "" != local.honeypot-err ? local.honeypot-err :
+    var.url-map-ref == "" && var.lb-scheme != "" ?
+      google_compute_url_map.u[0].id : var.url-map-ref )
 }
 
