@@ -118,8 +118,8 @@ And `reject-honeypot` means requests that use the honeypot hostname will
 not even be routed to your Backend.
 
 The [certificate-map-simple module](
-github.com/TyeMcQueen/terraform-google-certificate-map-simple) that this
-module uses fully documents these additional benefits.
+https://github.com/TyeMcQueen/terraform-google-certificate-map-simple)
+that this module uses fully documents these additional benefits.
 
 ### Avoiding Nested Modules
 
@@ -213,33 +213,35 @@ Limitations:
 
 You should also be aware of types of changes that require special care as
 documented in the other module's limitations: [Deletions](
-https://github.com/TyeMcQueen/terraform-google-ingress-to-gke/blob/main/Limitations.md#deletions).
+https://github.com/TyeMcQueen/terraform-google-certificate-map-simple/README.md#deletions).
 
 
 ## Input Variables
 
-* [backend-ref](/variables.tf#L133)
-* [bad-host-code](/variables.tf#L418)
-* [bad-host-host](/variables.tf#L437)
-* [bad-host-path](/variables.tf#L451)
-* [bad-host-redir](/variables.tf#L469)
-* [cert-map-ref](/variables.tf#L261)
+* [backend-ref](/variables.tf#L131)
+* [bad-host-backend](/variables.tf#L456)
+* [bad-host-code](/variables.tf#L437)
+* [bad-host-host](/variables.tf#L470)
+* [bad-host-path](/variables.tf#L485)
+* [bad-host-redir](/variables.tf#L503)
+* [cert-map-ref](/variables.tf#L259)
 * [create-lb-certs](/variables.tf#L65)
-* [description](/variables.tf#L298)
-* [dns-add-hosts](/variables.tf#L341)
-* [dns-ttl-secs](/variables.tf#L350)
-* [dns-zone-ref](/variables.tf#L174)
+* [description](/variables.tf#L296)
+* [dns-add-hosts](/variables.tf#L339)
+* [dns-ttl-secs](/variables.tf#L348)
+* [dns-zone-ref](/variables.tf#L172)
 * [hostnames](/variables.tf#L18)
-* [http-redir-code](/variables.tf#L395)
-* [ip-addr-ref](/variables.tf#L208)
-* [ip-is-shared](/variables.tf#L325)
-* [labels](/variables.tf#L309)
-* [lb-cert-refs](/variables.tf#L246)
+* [http-redir-code](/variables.tf#L393)
+* [ip-addr-ref](/variables.tf#L206)
+* [ip-is-shared](/variables.tf#L323)
+* [labels](/variables.tf#L307)
+* [lb-cert-refs](/variables.tf#L244)
 * [lb-scheme](/variables.tf#L104)
-* [map-cert-ids](/variables.tf#L228)
+* [map-cert-ids](/variables.tf#L226)
 * [map-name](/variables.tf#L80)
 * [name-prefix](/variables.tf#L5)
-* [project](/variables.tf#L285)
-* [quic-override](/variables.tf#L361)
-* [redirect-http](/variables.tf#L383)
-* [url-map-ref](/variables.tf#L152)
+* [project](/variables.tf#L283)
+* [quic-override](/variables.tf#L359)
+* [redirect-http](/variables.tf#L381)
+* [reject-honeypot](/variables.tf#L416)
+* [url-map-ref](/variables.tf#L150)
