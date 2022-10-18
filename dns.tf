@@ -55,7 +55,7 @@ resource "google_dns_record_set" "d" {
     var.dns-zone-ref == "" || !var.dns-add-hosts ? [] : local.dnshosts )
   project       = local.zone-proj
   managed_zone  = local.zone-title
-  name          = each.value
+  name          = "${each.value}."
   type          = "A"
   ttl           = var.dns-ttl-secs
   rrdatas       = [ local.ip-addr ]
