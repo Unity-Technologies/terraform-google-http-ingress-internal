@@ -128,47 +128,6 @@ variable "lb-scheme" {
 
 ###--- References to resources created elsewhere ---###
 
-variable "backend-ref" {
-  description   = <<-EOD
-    Either a full Backend Service resource `.id`, the `.name` given to a
-    Backend Service resource in this project, "$${project-id}/$${name}"
-    for a Backend Service in a different project, or "" if you provided
-    `url-map-ref` instead.
-
-    You must provide either `backend-ref` or `url-map-ref`.
-
-    If your Backend Service is created in the same Terraform workspace,
-    then be sure to reference the resource block when setting this
-    parameter so the Backend will be created before this module is called.
-
-    Example: backend-ref = google_compute_backend_service.my-be.id
-  EOD
-  type          = string
-  default       = ""
-}
-
-variable "url-map-ref" {
-  description   = <<-EOD
-    Full resource path (`.id`) for a URL Map created elsewhere (or leave as
-    "" to have a generic URL Map created).  [A future release may allow other
-    types of references after `data "google_compute_url_map"` blocks are
-    supported.]
-
-    If `url-map-ref` is left blank, then you must provide `backend-ref`
-    which will be used by the created URL Map.
-
-    Example: url-map-ref = google_compute_url_map.api.id
-  EOD
-  type          = string
-  default       = ""
-
-  validation {
-    condition       = ( "" == var.url-map-ref
-      || 2 < length(split( "/", var.url-map-ref )) )
-    error_message   = "Must be a full resource .id or \"\"."
-  }
-}
-
 variable "dns-zone-ref" {
   description   = <<-EOD
     Either the name given to a GCP-Managed DNS Zone resource in this project,
@@ -203,6 +162,25 @@ variable "dns-zone-ref" {
   }
 }
 
+variable "backend-ref" {
+  description   = <<-EOD
+    Either a full Backend Service resource `.id`, the `.name` given to a
+    Backend Service resource in this project, "$${project-id}/$${name}"
+    for a Backend Service in a different project, or "" if you provided
+    `url-map-ref` instead.
+
+    You must provide either `backend-ref` or `url-map-ref`.
+
+    If your Backend Service is created in the same Terraform workspace,
+    then be sure to reference the resource block when setting this
+    parameter so the Backend will be created before this module is called.
+
+    Example: backend-ref = google_compute_backend_service.my-be.id
+  EOD
+  type          = string
+  default       = ""
+}
+
 variable "ip-addr-ref" {
   description   = <<-EOD
     Name given to a Public IP Address allocated elsewhere.  Leave
@@ -220,6 +198,27 @@ variable "ip-addr-ref" {
   validation {
     condition       = length(split( "/", var.ip-addr-ref )) < 3
     error_message   = "Can't be a full resource .id."
+  }
+}
+
+variable "cert-map-ref" {
+  description   = <<-EOD
+    The `.id` of a certificate map created outside of this module.
+    [A future release may allow other types of references after
+    `data "google_certificate_manager_certificate_map"` blocks are
+    supported.]
+
+    Examples:
+      cert-map-ref = google_certificate_manager_certificate_map.my-cert-map.id
+      cert-map-ref = module.my-cert-map.map1[0].id
+  EOD
+  type          = string
+  default       = ""
+
+  validation {
+    condition       = ( "" == var.cert-map-ref
+      || 2 < length(split( "/", var.cert-map-ref )) )
+    error_message   = "Must be a full resource .id or \"\"."
   }
 }
 
@@ -256,23 +255,24 @@ variable "lb-cert-refs" {
   default       = []
 }
 
-variable "cert-map-ref" {
+variable "url-map-ref" {
   description   = <<-EOD
-    The `.id` of a certificate map created outside of this module.
-    [A future release may allow other types of references after
-    `data "google_certificate_manager_certificate_map"` blocks are
+    Full resource path (`.id`) for a URL Map created elsewhere (or leave as
+    "" to have a generic URL Map created).  [A future release may allow other
+    types of references after `data "google_compute_url_map"` blocks are
     supported.]
 
-    Examples:
-      cert-map-ref = google_certificate_manager_certificate_map.my-cert-map.id
-      cert-map-ref = module.my-cert-map.map1[0].id
+    If `url-map-ref` is left blank, then you must provide `backend-ref`
+    which will be used by the created URL Map.
+
+    Example: url-map-ref = google_compute_url_map.api.id
   EOD
   type          = string
   default       = ""
 
   validation {
-    condition       = ( "" == var.cert-map-ref
-      || 2 < length(split( "/", var.cert-map-ref )) )
+    condition       = ( "" == var.url-map-ref
+      || 2 < length(split( "/", var.url-map-ref )) )
     error_message   = "Must be a full resource .id or \"\"."
   }
 }
@@ -308,7 +308,7 @@ variable "labels" {
   description   = <<-EOD
     A map of label names and values to be applied to every created resource
     that supports labels (this includes the IP Address, the Forwarding Rules,
-    and the certificate map).
+    the certificate map, and "modern" certificates).
 
     Example:
       labels = { team = "my-team", terraform = "my-workspace" }
@@ -507,7 +507,7 @@ variable "bad-host-redir" {
     received for an unlisted hostname.  This sets the HTTP status code for
     that redirect and can be 301, 302, 303, 307, or 308.
 
-    Example: redir-status = 303
+    Example: bad-host-redir = 303
   EOD
   type          = number
   default       = 307
