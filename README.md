@@ -19,8 +19,9 @@ similar features to GKE ingress automation (but better).
 First, let's see how simple this module can be to use.  This invocation
 of the module configures global HTTP and HTTPS load balancing to your
 Backend Service using a "Classic" load-balancer-authorized SSL certificate
-(including allocating an IP address and creating a simple URL Map but not
-setting up DNS for it).
+(including allocating an IP address, arranging for http:// requests to be
+redirected to https://, and creating a simple URL Map but not setting up
+DNS records for it).
 
     module "my-ingress" {
       source            = (
@@ -126,7 +127,8 @@ that this module uses fully documents these additional benefits.
 The above example is the same as the following example where the use of the
 other module is made explicit.  This approach is recommended by Terraform
 as a best practice for combining modules.  But you can start with the simpler
-usage above and then move to this more verbose usage when the need arises.
+usage above and then move to this more verbose usage if and when the need
+arises.
 
     module "my-cert-map" {
       source            = (

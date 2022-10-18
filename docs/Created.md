@@ -209,8 +209,8 @@ more details.  The output values `.http[0]`, `.https[0]`, `.f80[0]`, and
 
 ## Redirect URL Map
 
-Only when the HTTPS Target Proxy is created and `redirect-http` is `true`,
-the following is created:
+Only when the HTTPS Target Proxy is created and `redirect-http` is left as
+`true`, the following is created:
 
 * One redirect URL Map
 

@@ -380,24 +380,24 @@ variable "quic-override" {
 
 variable "redirect-http" {
   description   = <<-EOD
-    Set `redirect-http = true` to have a seprate URL Map created for
-    just http requests (not https requests) that just redirects to the
-    https endpoint.  This input is silently ignored if you don't create
-    or reference any SSL certificates (thus preventing the https load
-    balancing from being set up).
+    Set `redirect-http = false` to have http:// requests routed to your
+    Backend.  By default, a separate URL Map is created for just http://
+    requests that simply redirects to https://, but only if you create
+    or reference at least one SSL certificate (otherwise https:// are
+    not even supported).
   EOD
   type          = bool
-  default       = false
+  default       = true
 }
 
 variable "http-redir-code" {
   description   = <<-EOD
-    If you set `redirect-http = true` to have http:// requests just
-    redirected to https://, then this is the status code used for those
-    redirects.  It can be 301, 302, 303, 307, or 308.  307 is the default
-    as mistakenly enabling the redirect using 308 can have long-lasting
-    impacts that cannot be easily reverted.  Using any value other than
-    307 or 308 may cause the HTTP method to change to "GET".
+    The status code used when redirecting http:// requests to https://.  Only
+    used if you leave `redirect-http` as `true` and create or reference at
+    least one SSL certificate.  It can be 301, 302, 303, 307, or 308.  307
+    is the default as mistakenly enabling the redirect using 308 can have
+    long-lasting impacts that cannot be easily reverted.  Using any value
+    other than 307 or 308 may cause the HTTP method to change to "GET".
   EOD
   type          = number
   default       = 307

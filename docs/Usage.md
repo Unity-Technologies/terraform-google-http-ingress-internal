@@ -30,8 +30,9 @@ links to more detailed documentation on each one.
     and a certificate map (see [Modern Certificates](
     /docs/Created.md#modern-ssl-certificates)).
 
-* `redirect-http` - Redirects http:// requests to become https:// requests
-    (see [Redirect URL Map](/docs/Created.md#redirect-url-map)).
+* `redirect-http` - Can prevent the redirecting of http:// requests to
+    become https:// requests (see [Redirect URL Map](
+    /docs/Created.md#redirect-url-map)).
 
 * `reject-honeypot` - Prevents requests for the "honeypot" hostname from
     being sent to your main Backend Service (see [Main URL Map](
