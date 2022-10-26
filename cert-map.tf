@@ -1,8 +1,7 @@
 
 module "cert-map" {
   source            = (
-  # "github.com/TyeMcQueen/terraform-google-certificate-map-simple" )
-    "../certmap" )
+    "github.com/TyeMcQueen/terraform-google-certificate-map-simple" )
   count             = "" == var.map-name ? 0 : 1
 
   project           = local.project
