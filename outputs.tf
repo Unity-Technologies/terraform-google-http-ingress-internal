@@ -14,6 +14,11 @@ output "ip" {
   value       = google_compute_global_address.i
 }
 
+output "ip-addr" {
+  description = "The IP address used for the ingress"
+  value       = local.ip-addr
+}
+
 output "f80" {
   description = (
     "A 0- or 1-entry list of port-80 Forwarding Rule resource created" )
