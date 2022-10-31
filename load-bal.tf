@@ -48,6 +48,7 @@ resource "google_compute_url_map" "redir" {
     redirect_response_code  = local.http-redir
     strip_query             = false
   }
+  lifecycle { create_before_destroy = true }
 }
 
 # HTTP target proxy:
