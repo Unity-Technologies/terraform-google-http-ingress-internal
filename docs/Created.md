@@ -67,9 +67,7 @@ by the load balancer, which means that the certificate will not be able to
 be activated until a while after the load balancer instance is live and
 the specified hostname (publicly) resolves to the LB IP address.  But the
 `terraform apply` can succeed even if the cert will not be able to be
-activated.  If the activation fails for long enough, then attempts to
-activate will stop and the cert will have to be recreated to have activation
-attempts resume.
+activated.
 
 The output value `.lb-certs` will be a map from the entered hostname
 (minus "|..." suffix) to the resource object.  The only customization is
