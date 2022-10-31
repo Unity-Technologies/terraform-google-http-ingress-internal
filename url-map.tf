@@ -29,10 +29,9 @@ locals {
     : 307 == var.bad-host-redir ? "TEMPORARY_REDIRECT"
     : 308 == var.bad-host-redir ? "PERMANENT_REDIRECT"
     : "ERROR Invalid redirect HTTP status code: ${var.bad-host-redir}" )
-  reject        = (
+  reroute       = "" != var.bad-host-backend
+  reject        = ( ! local.reroute &&
     "EXTERNAL_MANAGED" == var.lb-scheme && 0 != var.bad-host-code )
-  reroute       = (
-    "EXTERNAL" == var.lb-scheme && "" != var.bad-host-backend )
   redirect      = ( ! local.reroute &&
     "EXTERNAL" == var.lb-scheme && "" != var.bad-host-host )
   check-host = local.reject || local.reroute || local.redirect

@@ -240,11 +240,10 @@ The prerequisites for the created URL Map are `backend-ref` and non-empty
 The URL Map can be customized by the following input variables: `lb-scheme`,
 `hostnames`, `exclude-honeypot`, `bad-host-code`, `bad-host-backend`,
 `bad-host-host`, `bad-host-path`, `bad-host-redir`, `project`, `name-prefix`,
-and `description`.  Only when `lb-scheme` is left as "EXTERNAL_MANAGED" does
-`bad-host-code` apply.  Only when `lb-scheme` is "EXTERNAL" can
-`bad-host-backend`, `bad-host-host`, `bad-host-path`, and `bad-host-redir`
-apply.  See [inputs](/README.md#input-variables) or [variables](
-/variables.tf) for more details.
+and `description`.  Only when `lb-scheme` is left as "EXTERNAL_MANAGED"
+does `bad-host-code` apply.  Only when `lb-scheme` is "EXTERNAL" can
+`bad-host-host`, `bad-host-path`, and `bad-host-redir` apply.  See [inputs](
+/README.md#input-variables) or [variables](/variables.tf) for more details.
 
 By default, the URL Map will not route a request to your Backend
 unless the request uses one of the listed `hostnames`.  If you set
@@ -257,6 +256,8 @@ If you leave `lb-scheme` as "EXTERNAL_MANAGED", then requests using other
 hostnames will be rejected with a 403 status (unless you change
 `bad-host-code`).  Setting `bad-host-code = 0` means all requests will
 be routed to your Backend regardless of the hostname used in the request.
+Or you can set `bad-host-backend` to instead have requests for unlisted
+hosts routed to a different backend.
 
 If you set `lb-scheme` to "EXTERNAL", then requests for unlisted hostnames
 can either be routed to your main Backend (the default), be routed to a
