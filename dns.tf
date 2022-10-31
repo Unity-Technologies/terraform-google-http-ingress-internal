@@ -42,11 +42,12 @@ locals {
   tofq = { for h, suff in local.tosuff : h => (
     1 == length(split(".",h))
       ? "${h}.${local.zone-domain}"
-      : "." == substr(h,-1,1) ? "${h}${local.zone-domain}" : h ) }
+      : "." == substr(h,-1,1) ? "${h}${local.zone-domain}" : h )
+    if "" != h }
 
   # Hosts that DNS `A` records can be added for:
   dnshosts = [ for h, fq in local.tofq : fq
-    if h != fq && "" != h && "*" != substr(h,0,1) ]
+    if h != fq && "*" != substr(h,0,1) ]
 }
 
 # Create DNS 'A' record(s):
