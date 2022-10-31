@@ -34,7 +34,7 @@ links to more detailed documentation on each one.
     become https:// requests (see [Redirect URL Map](
     /docs/Created.md#redirect-url-map)).
 
-* `reject-honeypot` - Prevents requests for the "honeypot" hostname from
+* `exclude-honeypot` - Prevents requests for the "honeypot" hostname from
     being sent to your main Backend Service (see [Main URL Map](
     /docs/Created.md#main-url-map)).
 

@@ -238,7 +238,7 @@ The prerequisites for the created URL Map are `backend-ref` and non-empty
 `hostnames` (unless you customize the URL Map to not care about `hostnames`).
 
 The URL Map can be customized by the following input variables: `lb-scheme`,
-`hostnames`, `reject-honeypot`, `bad-host-code`, `bad-host-backend`,
+`hostnames`, `exclude-honeypot`, `bad-host-code`, `bad-host-backend`,
 `bad-host-host`, `bad-host-path`, `bad-host-redir`, `project`, `name-prefix`,
 and `description`.  Only when `lb-scheme` is left as "EXTERNAL_MANAGED" does
 `bad-host-code` apply.  Only when `lb-scheme` is "EXTERNAL" can
@@ -248,7 +248,7 @@ apply.  See [inputs](/README.md#input-variables) or [variables](
 
 By default, the URL Map will not route a request to your Backend
 unless the request uses one of the listed `hostnames`.  If you set
-`reject-honeypot = true`, then the first listed hostname will be treated
+`exclude-honeypot = true`, then the first listed hostname will be treated
 like an unlisted hostname (by the URL Map).  If you set `lb-scheme` to
 "EXTERNAL", then the URL Map will default to ignoring the request's
 hostname because "EXTERNAL" URL Maps cannot directly reject requests.

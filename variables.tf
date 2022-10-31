@@ -413,7 +413,7 @@ variable "http-redir-code" {
 
 ###--- URL map options ---###
 
-variable "reject-honeypot" {
+variable "exclude-honeypot" {
   description   = <<-EOD
     Set to `true` to not forward to your Backend any requests sent to the
     "honeypot" (first) hostname.  This can only work when there are at

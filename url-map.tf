@@ -37,18 +37,18 @@ locals {
     "EXTERNAL" == var.lb-scheme && "" != var.bad-host-host )
   check-host = local.reject || local.reroute || local.redirect
 
-  honeypot-err  = ( ! var.reject-honeypot ? "" :
+  honeypot-err  = ( ! var.exclude-honeypot ? "" :
     "" != var.url-map-ref ?
-      "ERROR reject-honeypot=true requires url-map-ref to be \"\"" :
+      "ERROR exclude-honeypot=true requires url-map-ref to be \"\"" :
     length(var.hostnames) < 2 ?
-      "ERROR reject-honeypot=true requires at least 2 hostnames" :
+      "ERROR exclude-honeypot=true requires at least 2 hostnames" :
     var.lb-scheme == "EXTERNAL" && var.bad-host-host == ""
         && var.bad-host-backend == "" ?
-      "ERROR reject-honeypot=true requires bad-host-host or bad-host-backend" :
+      "ERROR exclude-honeypot=true requires bad-host-host or bad-host-backend" :
     var.lb-scheme == "EXTERNAL_MANAGED" && var.bad-host-code == 0 ?
-      "ERROR reject-honeypot=true cannot work with bad-host-code=0" : "" )
+      "ERROR exclude-honeypot=true cannot work with bad-host-code=0" : "" )
 
-  skip-honeypot = ( var.reject-honeypot && "" == local.honeypot-err )
+  skip-honeypot = ( var.exclude-honeypot && "" == local.honeypot-err )
 
   url-hosts     = [
     for h, fq in local.tofq : fq
