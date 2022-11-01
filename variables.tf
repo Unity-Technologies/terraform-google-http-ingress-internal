@@ -383,8 +383,8 @@ variable "redirect-http" {
     Set `redirect-http = false` to have http:// requests routed to your
     Backend.  By default, a separate URL Map is created for just http://
     requests that simply redirects to https://, but only if you create
-    or reference at least one SSL certificate (otherwise https:// are
-    not even supported).
+    or reference at least one SSL certificate (otherwise https:// requests
+    are not even supported).
   EOD
   type          = bool
   default       = true

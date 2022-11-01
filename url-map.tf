@@ -51,7 +51,7 @@ locals {
 
   url-hosts     = [
     for h, fq in local.tofq : fq
-    if fq != local.tofq[local.keys[0]] || ! local.skip-honeypot ]
+    if h != split("|",local.keys[0])[0] || ! local.skip-honeypot ]
 }
 
 # Maybe create a generic URL Map:
